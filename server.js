@@ -1,123 +1,54 @@
-const express = require('express')
-const app = express()
-const bodyParser = require('body-parser')
+// server.js
+
+// set up ======================================================================
+// get all the tools we need
+var express  = require('express');
+var app      = express();
+var port     = process.env.PORT || 9000;
 const MongoClient = require('mongodb').MongoClient
-const BSON = require('bson');
-const passport = require('passport');
+var mongoose = require('mongoose');
+var passport = require('passport');
+var flash    = require('connect-flash');
 
+var morgan       = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser   = require('body-parser');
+var session      = require('express-session');
 
-var db, collection;
+var configDB = require('./config/database.js');
 
-const url = "mongodb+srv://user-one:BlueMoon@cluster0.5xllp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-const dbName = "producebyseason";
+var db
 
-const produce = ['apple', 'acorn squash', 'apricot', 'asparagus', 'artichoke', 'broccoli', 'brussel sprouts', 'beets', 'blueberry', 'blackberry', 'butternut squash', 'cabbage', 'cauliflower', 'corn', 'cantaloupe', 'cranberry', 'cucumber', 'cherrie', 'eggplant', 'grapefruit', 'grapes', 'kiwi', 'leeks', 'lemon', 'lettuce', 'mango', 'mushroom', 'okra', 'orange', 'pear', 'parsnip', 'persimmon', 'pomegranate', 'papaya', 'plums', 'pepper', 'peach', 'rutabaga', 'radish', 'strawberry', 'sweet potato', 'spinach', 'turnip', 'tangerine', 'tangerine', 'winter squash']
+// configuration ===============================================================
+mongoose.connect(configDB.url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, database) => {
+  if (err) return console.log(err)
+  db = database
+  require('./app/routes.js')(app, passport, db);
+}); // connect to our database
 
+require('./config/passport')(passport); // pass passport for configuration
 
-app.set('view engine', './src/views');
-
-app.listen(3000, () => {
-    MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
-        if(error) {
-            throw error;
-        }
-        db = client.db(dbName);
-        console.log("Connected to `" + dbName + "`!");
-    });
-});
-
-app.set('view engine', 'ejs')
-app.use(bodyParser.urlencoded({extended: true}))
-app.use(bodyParser.json())
+// set up our express application
+app.use(morgan('dev')); // log every request to the console
+app.use(cookieParser()); // read cookies (needed for auth)
+app.use(bodyParser.json()); // get information from html forms
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'))
+
+
+app.set('view engine', 'ejs'); // set up ejs for templating
+
+// required for passport
+app.use(session({
+    secret: 'rcbootcamp2021b', // session secret
+    resave: true,
+    saveUninitialized: true
+}));
 app.use(passport.initialize());
-app.use(passport.session());
-require('./config/passport')(passport);
-
-app.get('/', (req, res) => {
-  db.collection('products').find().toArray((err, result) => {
-    if (err) return console.log(err)
-    res.render('index.ejs', {producebyseason: result}) //all the variables that the template can use
-    //the variable is "producebyseason" : result is the variable that we are getting the value out of
-    //"producebyseason" got passed through the arrow function
-    //result was the variable that was in the arrow function
-    // %= puts in values, can apply js through here if included
-  })
-})
+app.use(passport.session()); // persistent login sessions
+app.use(flash()); // use connect-flash for flash messages stored in session
 
 
-app.post('/array', (req, res) => { //matches with the fetch in main.js, line 26
-  db.collection('product').findOne({monthname : req.body.month},(err, result) => { //the req.body is what the client sent. the 'month' is the property. req is sending from the browser. the body is the individual element that the browser is sending. the 'month' is the property of the body
-    if (err) return console.log(err)
-    res.send(result) //no need to render just yet, only receiving the data and letting the client decide what to do from there. sends stuff to the browser
-    //sending the data back to the client side that will translate it to json and make it ready to render back into html for the DOM
-    console.log(result)
-    console.log(req.body.month)
-  }) //find(document/object).toArray(month)
-}
-
-)
-
-app.get('/login', function(req, res) {
-  res.render('login.ejs');
-});
-
-app.get('/signup', function(req, res) {
-  res.render('signup.ejs');
-});
-///.findOne({monthname : req.body.month},(err, result)
-
-// =============================================================================
-// AUTHENTICATE (FIRST LOGIN) ==================================================
-// =============================================================================
-
-    // locally --------------------------------
-        // LOGIN ===============================
-        // show the login form
-        app.get('/login', function(req, res) {
-          res.render('login.ejs');
-      });
-
-      // process the login form
-      app.post('/login', passport.authenticate('local-login', {
-          successRedirect : '/profile', // redirect to the secure profile section
-          failureRedirect : '/login', // redirect back to the signup page if there is an error
-          failureFlash : true // allow flash messages
-      }));
-
-      // SIGNUP =================================
-      // show the signup form
-
-      // process the signup form
-      app.post('/signup', passport.authenticate('local-signup', {
-          successRedirect : '/profile', // redirect to the secure profile section
-          failureRedirect : '/signup', // redirect back to the signup page if there is an error
-          failureFlash : true // allow flash messages
-      }));
-
-// =============================================================================
-// UNLINK ACCOUNTS =============================================================
-// =============================================================================
-// used to unlink accounts. for social accounts, just remove the token
-// for local account, remove email and password
-// user account will stay active in case they want to reconnect in the future
-
-  // local -----------------------------------
-  app.get('/unlink/local', isLoggedIn, function(req, res) {
-      var user            = req.user;
-      user.local.email    = undefined;
-      user.local.password = undefined;
-      user.save(function(err) {
-          res.redirect('/profile');
-      });
-  });
-
-
-
-// route middleware to ensure user is logged in
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated())
-      return next();
-
-  res.redirect('/');
-}
+// launch ======================================================================
+app.listen(9000);
+console.log('The magic happens on port ' + port);

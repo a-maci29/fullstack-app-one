@@ -1,68 +1,87 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>21 Savage Fan Site</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-
-    <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
-        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+  <div id="top"><h1>Seasonal Growth</h1>
+    <h2>Scroll through the yearly calendar to see what's in season</h2>
     </div>
 
-    <div class="row">
+        <div id="main">
+            <div id="calender">
 
-        <!-- LOCAL INFORMATION -->
-        <div class="col-sm-6">
-            <div class="well">
-                <h3><span class="fa fa-user"></span> Local</h3>
+              <section id="januarySect">
+                <a href="/profile/january"><button class="monthButton" id="january">JANUARY</button></a>
+                <section id="january_produce"></section>
+              </section>
 
-                <% if (user.local.email) { %>
-                    <p>
-                        <strong>id</strong>: <%= user._id %><br>
-                        <strong>email</strong>: <%= user.local.email %><br>
-                        <strong>password</strong>: <%= user.local.password %>
-                    </p>
+              <section id="febSect">
+                <button class="monthButton" id="february">FEBRUARY</button>
+                <section id="february_produce"></section>
+              </section>
 
-                    <a href="/unlink/local" class="btn btn-default">Unlink</a>
-                <% } else { %>
-                    <a href="/connect/local" class="btn btn-default">Connect Local</a>
-                <% } %>
+              <section id="march"></section>
+                <button class="monthButton" id="march">MARCH</button>
+                <section id="march_produce"></section>
 
+              <section id="april"></section>
+                <button class="monthButton" id="april">APRIL</button>
+                <section id="april_produce"></section>
+
+              <section id="may"></section>
+                <button class="monthButton" id="may">MAY</button>
+                <section id="may_produce"></section>
+
+              <section id="june"></section>
+                <button class="monthButton" id="june">JUNE</button>
+                <section id="june_produce"></section>
+
+              <section id="july"></section>
+                <button class="monthButton" id="july">JULY</button>
+                <section id="july_produce"></section>
+
+              <section id="august"></section>
+                <button class="monthButton" id="august">AUGUST</button>
+                <section id="august_produce"></section>
+
+              <section id="september"></section>
+                <button class="monthButton" id="september">SEPTEMBER</button>
+                <section id="february_produce"></section>
+
+              <section id="october"></section>
+                <button class="monthButton" id="october">OCTOBER</button>
+                <section id="october_produce"></section>
+
+              <section id="november"></section>
+              <button class="monthButton" id="november">NOVEMBER</button>
+              <section id="november_produce"></section>
+
+              <section id="december"></section>
+              <button class="monthButton" id="december">DECEMBER</button>
+              <section id="december_produce"></section>
             </div>
-        </div>
-        <div class="col-sm-6">
-          <h3>Messages</h3>
-          <ul class="messages">
-          <% for(var i=0; i<messages.length; i++) {%>
-            <li class="message">
-              <span><%= messages[i].name %></span>
-              <span><%= messages[i].msg %></span>
-              <span><%= messages[i].thumbUp %></span>
-              <span><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-              <span><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-              <span><i class="fa fa-trash" aria-hidden="true"></i></span>
-            </li>
-          <% } %>
-          </ul>
 
-          <h2>Add a message</h2>
-        <% if (user.local.email) { %>
-          <form action="/messages" method="POST">
-            <input type="text" value="<%= user.local.email %>" name="name">
-            <input type="text" placeholder="message" name="msg">
-            <button type="submit">Submit</button>
-          </form>
-        </div>
-        <% } %>
-
-</div>
-
-<script src="main.js"></script>
-
+          <div id="shoppingList">
+            <h4>Add to shopping list</h4>
+            <ul>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+            </ul>
+          </div>
+    
+        <hr>
+  
+      <script src="main.js"></script>
 </body>
 </html>

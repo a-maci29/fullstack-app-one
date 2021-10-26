@@ -1,5 +1,6 @@
 //event listeners, api fetch, etc
 
+
 //event listener for 'click' onto the month to grab the requested values month
 
 const monthButtons = document.getElementsByClassName("monthButton"); //querySelectorAll does need the '.' before a class name, .getElementsbyClassame does
@@ -24,7 +25,7 @@ const monthButtons = document.getElementsByClassName("monthButton"); //querySele
 Array.from(monthButtons).forEach(function(button) { //sending the month to the server, (the forEach looping through each button). NOTE: the for.Each requires a function, in this case an anon function will work
   button.addEventListener('click', function(){ //anon function 
     console.log('clickedonmonth', button.id)
-    fetch('/array', {
+    fetch('array', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({month : button.id}) //sending the month to the server
@@ -33,8 +34,7 @@ Array.from(monthButtons).forEach(function(button) { //sending the month to the s
       if (response.ok) return response.json()
     })
     .then(data => {
-      console.log(data.products.join(", "))
-      document.getElementById(button.id + "_produce").innerText=data.products.join(", ")
+    data => console.log(data)
     })
   });
 });

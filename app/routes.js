@@ -8,15 +8,28 @@ module.exports = function(app, passport, db) {
     });
 
     // PROFILE SECTION =========================
-    app.get('/profile', isLoggedIn, function(req, res) {
-        db.collection('messages').find().toArray((err, result) => {
-          if (err) return console.log(err)
-          res.render('profile.ejs', {
-            user : req.user,
-            messages: result
-          })
-        })
+    app.get('/profile', function(req, res) {
+        // db.collection('product').find().toArray((err, result) => {
+        //   if (err) return console.log(err)
+        //   res.render('profile.ejs', {
+        //     user : req.user,
+        //     messages: result
+        //   })
+        // })
+
+        res.render('profile.ejs');
     });
+
+    app.get('/profile/:month', function(req, res) {
+    
+      db.collection('users').find().toArray((err, result) => { 
+        if (err) return console.log(err)
+      
+        console.log(result)
+       
+      }) 
+   
+  });
 
     // LOGOUT ==============================
     app.get('/logout', function(req, res) {
@@ -25,6 +38,15 @@ module.exports = function(app, passport, db) {
     });
 
 // message board routes ===============================================================
+app.post('/array', (req, res) => { //matches with the fetch in main.js, line 26
+  db.collection('product').findOne({monthname : req.body.month},(err, result) => { 
+    if (err) return console.log(err)
+    res.send(result) 
+    console.log(result)
+    console.log(req.body.month)
+  }) 
+})
+
 
     app.post('/messages', (req, res) => {
       db.collection('messages').save({name: req.body.name, msg: req.body.msg, thumbUp: 0, thumbDown:0}, (err, result) => {
@@ -71,6 +93,9 @@ module.exports = function(app, passport, db) {
 
         // SIGNUP =================================
         // show the signup form
+        app.get('/signup', function(req, res) {
+          res.render('signup.ejs', { message: req.flash('signupMessage') });
+      });
 
         // process the signup form
         app.post('/signup', passport.authenticate('local-signup', {

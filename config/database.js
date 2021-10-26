@@ -1,7 +1,7 @@
 // config/database.js
 module.exports = {
 
-    'url' : 'mongodb+srv://user-one:BlueMoon@cluster0.5xllp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', 
-    'dbName': 'demo'
+    'url' : 'mongodb+srv://user-one:BlueMoon@cluster0.5xllp.mongodb.net/producebyseason?retryWrites=true&w=majority', 
+    'dbName': 'producebyseason'
 };
 //const url = "mongodb+srv://user-one:BlueMoon@cluster0.5xllp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
